@@ -8,7 +8,7 @@ env.Library(
     target='audit',
     source=[
         'audit_commands.cpp',
-        'audit_file.cpp',
+        'audit_flusher.cpp',
         'audit_options.cpp',
         'audit.cpp',
         env.Idlc("audit_parameters.idl")[0],

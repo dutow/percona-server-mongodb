@@ -126,6 +126,16 @@ var getAuditEventsCollection = function(m, dbname, primary, useAuth) {
         assert(adminDB.auth('admin','admin'), "could not auth as admin (pwd admin)");
     }
 
+    // Make all audit events durable
+    // To make "non-durable" events like auth checks or app messages durable
+    // we need to put some "durable" events after them.
+    // Those extra events won't affect our tests because all tests search
+    // events only in strict time range  (beforeCmd, beforeLoad).
+    var fooColl = adminDB.getCollection('foo' + Date.now());
+    fooColl.insert({a:1});
+    fooColl.drop();
+    adminDB.runCommand({fsync: 1});
+
     // the audit log is specifically parsable by mongoimport,
     // so we use that to conveniently read its contents.
     var auditOptions = adminDB.runCommand('auditGetOptions');
